@@ -3,17 +3,21 @@
 int main() {
 
    FILE *fp;
-   char buff[255];
 
-   fp = fopen("input","r");
-   fscanf(fp, "%s", buff);
-   printf("1 : %s\n", buff );
+   fp = fopen("input", "r");
+   int next;
+   int count = 0;
 
-   fgets(buff, 255, (FILE*)fp);
-   printf("2: %s\n", buff );
+   while ((next = fgetc(fp)) != EOF) {
+      switch (next)
+      {
+      case (int) '(' : count++;
+         break;
+      
+      case (int) ')' : count--;
+         break;
+      }
+   }
    
-   fgets(buff, 255, (FILE*)fp);
-   printf("3: %s\n", buff );
-   fclose(fp);
-
+   printf("%i", count);
 }
