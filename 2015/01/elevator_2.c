@@ -15,11 +15,11 @@ int main()
         pos++;
 
         switch (next) {
-        case (int)'(':
+        case '(':
             count++;
             break;
 
-        case (int)')':
+        case ')':
             count--;
             break;
         }
