@@ -31,8 +31,6 @@ int check_string(char* string) {
 
 int main() {
 
-    check_string("qjhvhtzxzqqjkmpb");
-
     FILE* fp = fopen("input.txt", "r");
     
     char line[100];
