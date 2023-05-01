@@ -56,85 +56,19 @@
 
 ; To guarantee victory against the giant squid, figure out which board will win first. What will your final score be if you choose that board?
 
-; First Part
-
-(define mat '((1 2) (3 4)))
-
-(define (transpose mat)
-  (if (null? (car mat))
-    '()
-    (cons (map car mat)
-          (transpose (map cdr mat)))))
-
-(define (matrix-map f mat)
-  (append (row-map f mat)
-          (col-map f mat)))
-
-(define (row-map f mat)
-  (map f mat))
-
-(define (col-map f mat)
-  (map f (transpose mat)))
-
-(define (member? x l)
-  (cond ((null? l) #f)
-        ((eq? x (car l)) #t)
-        (else (member? x (cdr l)))))
-
-(define (check-nums nums l)
-  (cond ((null? l) #t)
-        ((member? (car l) nums) (check-nums nums (cdr l)))
-        (else #f)))
-
-(define (check-board nums board)
-    (any (lambda (x) (eq? x #t)) ; I know this is ugly, but I couldn't reduce with or, as it's apparently a macto
-         (matrix-map (lambda (l) (check-nums nums l)) board)))
-
-(define (check-all nums boards)
-  (map (lambda (board) (check-board nums board)) boards))
-
-(define (make-boards data)
-  (fiveify (fiveify data)))
-
-(define (find-true l)
-  (let loop ((index 0)
-             (rem l))
-    (cond ((null? rem) -1)
-          ((car rem) index)
-          (else (loop (1+ index) (cdr rem))))))
-
-(define (fiveify l)
+(define (group-by-n l n)
   (if (null? l)
     '()
-    (cons (list-head l 5)
-            (fiveify (list-tail l 5)))))
+    (cons (take l n) (group-by-n (drop l n) n))))
 
-(define (find-bingo numbers boards)
-  (let loop ((nums 5))
-    (if (not (eq? (find-true (check-all (list-head numbers nums) boards)) -1))
-      (calculate-board (list-ref boards (find-true (check-all (list-head numbers nums) boards))) (list-head numbers nums))
-      (loop (1+ nums)))))
+(define (parse-tables l)
+  (group-by-n 
+    (group-by-n l 5)
+    5))
 
-(define (flatten matrix)
-  (reduce append '() matrix))
+(parse-tables example-tables)
 
-(define (calculate-board board numbers)
-  (* (car (reverse numbers))
-     (reduce + 0 (filter (lambda (x) (not (member? x numbers))) (flatten board)))))
-
-(find-bingo numbers-raw (make-boards tables-raw))
-
-; Second Part
-
-; On the other hand, it might be wise to try a different strategy: let the giant squid win.
-
-; You aren't sure how many bingo boards a giant squid could play at once, so rather than waste time counting its arms, the safe thing to do is to figure out which board will win last and choose that one. That way, no matter which boards it picks, it will win for sure.
-
-; In the above example, the second board is the last to win, which happens after 13 is eventually called and its middle column is completely marked. If you were to keep playing until this point, the second board would have a sum of unmarked numbers equal to 148 for a final score of 148 * 13 = 1924.
-
-; Figure out which board will win last. Once it wins, what would its final score be?
-
-; ------------------------
+(parse
 
 (define example-tables '(
 22 13 17 11  0
@@ -156,7 +90,7 @@
  2  0 12  3  7))
 
 
-(define numbers-raw '(94 21 58 16 4 1 44 6 17 48 20 92 55 36 40 63 62 2 47 7 46 72 85 24 66 49 34 56 98 41 84 23 86 64 28 90 39 97 73 81 12 69 35 26 75 8 32 77 52 50 5 96 14 31 70 60 29 71 9 68 19 65 99 57 54 61 33 91 27 78 43 95 42 3 88 51 53 30 89 87 93 74 18 15 80 38 82 79 0 22 13 67 59 11 83 76 10 37 25 45))
+(define numbers-raw "94,21,58,16,4,1,44,6,17,48,20,92,55,36,40,63,62,2,47,7,46,72,85,24,66,49,34,56,98,41,84,23,86,64,28,90,39,97,73,81,12,69,35,26,75,8,32,77,52,50,5,96,14,31,70,60,29,71,9,68,19,65,99,57,54,61,33,91,27,78,43,95,42,3,88,51,53,30,89,87,93,74,18,15,80,38,82,79,0,22,13,67,59,11,83,76,10,37,25,45")
 
 (define tables-raw '(
 49 74 83 34 40
