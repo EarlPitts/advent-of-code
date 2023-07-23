@@ -1,5 +1,7 @@
 import Prelude hiding (Left, Right)
 
+import Debug.Trace
+
 data Sign = Negative | Positive deriving (Show, Eq)
 data Dir = Left | Right
 
@@ -54,13 +56,23 @@ solve n z = case move dir (abs val) new of
         dir = if sign val == Positive then Right else Left
         new = modify z (val + 1)
 
-step :: Zipper Int -> Maybe (Zipper Int)
-step z = move dir (abs val) new
-  where val = getValue z
-        dir = if sign val == Positive then Right else Left
-        new = modify z (val + 1)
-
 solution :: String -> String
 solution = show . solve 1 . mkZipper . fmap read . lines
 
-main = interact solution
+solve' :: Int -> Zipper Int -> Int
+solve' n z = case move dir (abs val) new of
+          Nothing -> n
+          Just next ->
+            -- trace (show next)
+            solve' (n + 1) next
+  where val = getValue z
+        dir = if sign val == Positive then Right else Left
+        incr = if val >= 3 then -1 else 1
+        new = modify z (val + incr)
+
+solution' :: String -> String
+solution' = show . solve' 1 . mkZipper . fmap read . lines
+
+main = interact solution'
+-- Unfortunately this is just not efficient enough, so I get stack overflows
+-- I had to implement the solution in python (Day05.py)
