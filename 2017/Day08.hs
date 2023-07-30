@@ -99,20 +99,20 @@ showState vars s =
     ", "
     [v ++ " = " ++ show (s v) | v <- vars]
 
-update :: Register -> Int -> (State -> State)
+update :: Register -> Int -> State -> State
 update reg val s r
   | reg == r = val
-  | otherwise = s reg
+  | otherwise = s r
 
 readReg :: State -> Register -> Int
 readReg = ($)
 
 registers :: [Instruction] -> [Register]
-registers = fmap reg
+registers = nub . fmap reg
 
 run :: [Instruction] -> State -> State
-run [] _ = initState
-run (i : is) s = if checkCond i s then execStep i s else run is s
+run [] s = s
+run (i : is) s = if checkCond i s then run is (execStep i s) else run is s
 
 execStep :: Instruction -> State -> State
 execStep (Instruction reg Dec val _) s = update reg (readReg s reg - val) s
@@ -129,7 +129,7 @@ checkCond i s = case rel of
     (Cond reg rel val) = cond i
 
 parseAndRun :: String -> String
-parseAndRun s = show $ last $ sortOn fst $ fmap (\r -> (readReg endState r, r)) usedRegs
+parseAndRun s = show $ maximum $ sortOn fst $ fmap (\r -> (readReg endState r, r)) usedRegs
   where
     is = case parse p "" s of
       Right is' -> is'
