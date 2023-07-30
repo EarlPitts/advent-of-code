@@ -1,3 +1,4 @@
+import Control.Monad.State qualified as ST
 import Data.Either
 import Data.List
 import Text.Parsec hiding (State)
@@ -137,4 +138,30 @@ parseAndRun s = show $ maximum $ sortOn fst $ fmap (\r -> (readReg endState r, r
     usedRegs = registers is
     endState = run is initState
 
-main = interact parseAndRun
+main = interact parseAndRun'
+
+maxVal :: State -> [Register] -> Int
+maxVal s rs = maximum (fmap (readReg s) rs)
+
+run' :: [Instruction] -> State -> [Register] -> ST.State Int State
+run' [] s rs = return s
+run' (i : is) s rs =
+  if checkCond i s
+    then do
+      m <- ST.get
+      let curr = maxVal s rs
+      if curr > m
+        then do
+          ST.put curr
+          run' is (execStep i s) rs
+        else run' is (execStep i s) rs
+    else run' is s rs
+
+parseAndRun' :: String -> String
+parseAndRun' s = show maxVal
+  where
+    is = case parse p "" s of
+      Right is' -> is'
+      Left _ -> []
+    usedRegs = registers is
+    maxVal = ST.execState (run' is initState usedRegs) 0
