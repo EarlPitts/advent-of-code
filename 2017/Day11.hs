@@ -59,7 +59,10 @@ dirParser =
     pairUp "sw" = sw
 
 path :: [Move] -> Move
-path = foldr (.) id
+path = foldl (.) id
+
+allPaths :: [Move] -> [Move]
+allPaths = scanl (.) id
 
 -- distance :: Coord -> Int
 -- distance (x, y) = go (abs x, abs y)
@@ -76,4 +79,6 @@ main = do
   input <- getContents
   let moves = fromRight [] (parse p "" input)
   let coord = path moves (0, 0)
+  let allCoords = allPaths moves <*> [(0,0)]
   print $ distance coord
+  print $ maximum $ distance <$> allCoords
