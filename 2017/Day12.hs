@@ -26,3 +26,4 @@ main = do
   input <- getContents
   let graph = fromRight (error "Oh no!") (parse p "" input)
   print (length $ reachable graph 0)
+  print (length $ components graph)
