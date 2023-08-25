@@ -12,12 +12,15 @@ highBits n = take 16 (reverse bin)
   where bin = showIntAtBase 2 intToDigit n ""
 
 -- This works, but its horribly slow and uses a ton of memory
--- Also have an off-by-one error, which is weird
 main :: IO ()
 main = do
   initA <- read <$> getLine
   initB <- read <$> getLine
-  let a = take 40000000 $ tail $ iterate nextA initA
-  let b = take 40000000 $ tail $ iterate nextB initB
+  let a = tail $ iterate nextA initA
+  let b = tail $ iterate nextB initB
+  let filteredA = filter (\x -> mod x 4 == 0) a
+  let filteredB = filter (\x -> mod x 8 == 0) b
   let pairs = zip a b
-  print $ length $ filter (\(x, y) -> highBits x == highBits y) pairs
+  let filteredPairs = zip filteredA filteredB
+  print $ length $ filter (\(x, y) -> highBits x == highBits y) (take 40000000 pairs)
+  print $ length $ filter (\(x, y) -> highBits x == highBits y) (take 5000000 filteredPairs)
