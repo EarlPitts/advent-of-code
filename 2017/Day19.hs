@@ -37,13 +37,14 @@ data Dir = U | D | L | R deriving (Show, Eq)
 type Solution = String
 
 type Position = (Int, Int)
+type Steps = Int
 
-solve :: Maze -> Position -> S.State (Dir, Solution) Solution
+solve :: Maze -> Position -> S.State (Dir, Solution, Steps) (Solution,Steps)
 solve m p = do
   newPos <- step m p
-  (dir,sol) <- get
-  if lastTile m (trace (show (newPos,dir)) newPos)
-  then get >>= (\(_,s) -> return s)
+  (dir,sol,_) <- get
+  if lastTile m newPos
+  then get >>= (\(_,sol,steps) -> return (sol,steps))
   else solve m newPos
 
 lastTile :: Maze -> Position -> Bool
@@ -52,25 +53,25 @@ lastTile m (r,c) = length (filter isEmpty adj) == 3
         isEmpty Empt = True
         isEmpty _    = False
 
-step :: Maze -> Position -> S.State (Dir, Solution) Position
+step :: Maze -> Position -> S.State (Dir, Solution, Steps) Position
 step m (r, c) = do
-  (dir,sol) <- get
+  (dir,sol,_) <- get
   (r',c') <- newPos m (r,c) dir tile
-  (dir,sol) <- get
+  (dir,sol,steps) <- get
   if isLetter (getTile m r' c')
-  then let (Letter l) = getTile m r' c' in put (dir,l:sol) >> return (r',c')
-  else return (r',c')
+  then let (Letter l) = getTile m r' c' in put (dir,l:sol,steps+1) >> return (r',c')
+  else put (dir,sol,steps+1) >> return (r',c')
   where
     tile = getTile m r c
     isLetter (Letter _) = True
     isLetter _          = False
 
-newPos :: Maze -> Position -> Dir -> Tile -> S.State (Dir, Solution) Position
+newPos :: Maze -> Position -> Dir -> Tile -> S.State (Dir, Solution, Steps) Position
 newPos m (r,c) d Cross = case changeDir m (r,c) d of
-  U -> get >>= (\(_,s) -> put (U,s) >> return (r-1,c))
-  D -> get >>= (\(_,s) -> put (D,s) >> return (r+1,c))
-  L -> get >>= (\(_,s) -> put (L,s) >> return (r,c-1))
-  R -> get >>= (\(_,s) -> put (R,s) >> return (r,c+1))
+  U -> get >>= (\(_,s,st) -> put (U,s,st) >> return (r-1,c))
+  D -> get >>= (\(_,s,st) -> put (D,s,st) >> return (r+1,c))
+  L -> get >>= (\(_,s,st) -> put (L,s,st) >> return (r,c-1))
+  R -> get >>= (\(_,s,st) -> put (R,s,st) >> return (r,c+1))
 newPos _ (r,c) d Empt = error $ show (r,c) <> " " <> show d
 newPos _ (r,c) U _ = return (r-1,c)
 newPos _ (r,c) D _ = return (r+1,c)
@@ -95,4 +96,6 @@ main = do
   input <- getContents
   let (Right maze) = parse p "" input
   let startPos = start maze
-  print $ reverse (evalState (solve maze startPos) (D,""))
+  let (sol,steps) = evalState (solve maze startPos) (D,"",1)
+  print (reverse sol)
+  print steps
