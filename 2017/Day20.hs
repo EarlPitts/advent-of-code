@@ -2,8 +2,8 @@ import Text.Parsec
 import Text.Parsec.String
 import Data.List
 
-data Particle = Particle Position Velocity Acceleration deriving (Show,Eq)
-data Position = Position Int Int Int deriving (Show,Eq)
+data Particle = Particle Position Velocity Acceleration deriving (Show)
+data Position = Position Int Int Int deriving (Show,Eq,Ord)
 data Velocity = Velocity Int Int Int deriving (Show,Eq)
 data Acceleration = Acceleration Int Int Int deriving (Show,Eq)
 
@@ -70,6 +70,23 @@ movePos (Position x y z) (Velocity x' y' z') = Position (x + x') (y + y') (z + z
 dist :: Particle -> Int
 dist (Particle (Position x y z) _ _) = abs x + abs y + abs z
 
+instance Eq Particle where
+  (==) (Particle pos _ _) (Particle pos' _ _) = pos == pos'
+
+instance Ord Particle where
+  compare (Particle pos _ _) (Particle pos' _ _) = compare pos pos'
+  
+simulate :: [Particle] -> [[Particle]]
+simulate ps = intact : simulate intact
+  where
+    newStates = step <$> ps
+    intact = remDupls newStates
+
+remDupls :: Ord a => [a] -> [a]
+remDupls = concat . filter isSingleton . group . sort
+  where
+    isSingleton = (== 1) . length
+
 main :: IO ()
 main = do
   input <- getContents
@@ -77,4 +94,6 @@ main = do
   let distances = fmap dist . iterate step <$> ps
   let longRun = (!! 1000) <$> distances
   let closest = head . sortOn snd $ zip [0..] longRun
+  let remaining = simulate ps !! 100
   print closest
+  print $ length remaining
