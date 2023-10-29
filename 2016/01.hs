@@ -26,8 +26,18 @@ step (State E (Coord x y)) (Ins R n) = State S (Coord x (y - n))
 manhattan :: Coord -> Int
 manhattan (Coord x y) = x + y
 
+intermediate :: Coord -> Coord -> [Coord]
+intermediate (Coord x y) (Coord x' y') =
+  if x == x'
+    then Coord x <$> f y y'
+    else flip Coord y <$> f x x'
+  where f x y = if x < y then [x..y-1] else [x,x-1..y+1]
+
 main :: IO ()
 main = do
   input <- parse <$> readFile "input"
   let (State N finalCoord) = foldl step (State N (Coord 0 0)) input
   print $ manhattan finalCoord
+  let locs = scanl step (State N (Coord 0 0)) input
+  let cs = concatMap (uncurry intermediate) (zip (map (\(State _ c) -> c) locs) (tail (map (\(State _ c) -> c) locs)))
+  mapM_ print cs
