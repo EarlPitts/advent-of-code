@@ -1,7 +1,15 @@
+import Data.List
+
 import Text.Parsec
 import Text.Parsec.String
 
-data Cubes = Green Int | Blue Int | Red Int deriving (Eq,Show)
+data Cubes = Green Int | Blue Int | Red Int deriving (Show,Ord)
+
+instance Eq Cubes where
+  (==) (Green _) (Green _) = True
+  (==) (Blue _)  (Blue _)  = True
+  (==) (Red _)   (Red _)   = True
+  (==) _         _         = False
 
 newtype Draw = Draw [Cubes] deriving (Eq,Show)
 newtype Game = Game [Draw] deriving (Eq,Show)
@@ -43,6 +51,14 @@ validCubes (Blue n)  = n <= 14
 validCubes (Red n)   = n <= 12
 validCubes (Green n) = n <= 13
 
+minsPower :: Game -> Int
+minsPower (Game ds) = product $ num . maximum <$> group (sort $ concatMap cubes ds)
+  where
+    cubes (Draw cs) = cs
+    num (Red n) = n
+    num (Green n) = n
+    num (Blue n) = n
+
 main :: IO ()
 main = do
   input <- readFile "input"
@@ -50,3 +66,4 @@ main = do
   let games = zip [1..] d
   let valid = filter (\(_,g) -> validGame g) games
   print $ sum (fst <$> valid)
+  print $ sum $ minsPower <$> (snd <$> games)
