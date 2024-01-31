@@ -1,2 +1,8 @@
 **.out
 tags
+.bsp
+.bloop
+.metals
+project
+target
+input.txt
