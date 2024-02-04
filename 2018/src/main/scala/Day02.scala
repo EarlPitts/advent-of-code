@@ -17,11 +17,14 @@ def group[A: Eq : Order](l: List[A]): List[List[A]] =
   val a :: as = l.sorted
   go(List(), List(a), as)
 
-def checksum(l: List[String]): Int = ???
-  // l.map(count).sum
+def hasN[A : Eq : Order](n: Int)(l: List[A]): Boolean =
+  group(l).map(_.size).contains(n)
+
+def checksum(l: List[String]): Int =
+  l.map(_.toList).filter(hasN(2)).size * l.map(_.toList).filter(hasN(3)).size
 
 object Main extends IOApp.Simple:
   def run: IO[Unit] = for
     data <- getInput
-    _ <- data.traverse(IO.println(_))
+    _ <- IO.println(checksum(data))
   yield ()
