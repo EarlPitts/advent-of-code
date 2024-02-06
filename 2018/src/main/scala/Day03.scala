@@ -48,12 +48,16 @@ def coordify(c: Claim): List[Coord] =
     case Claim(_, left, top, width, length) =>
       coords(width, length).map(shift(left, top))
 
+def checkClaim(cs: List[Coord])(c: Claim): Boolean =
+  (coordify(c).toSet & cs.toSet).isEmpty
 
 object Main extends IOApp.Simple:
   def run: IO[Unit] = for
     data <- getInputRaw
     Success(claims) = p.parse(data)
-    cs = claims.map(coordify)
-    overlaps = group(cs.flatten).filter(_.size >= 2).map(_.head)
+    cs = claims.flatMap(coordify)
+    overlaps = group(cs).filter(_.size >= 2).map(_.head)
     _ <- IO.println(overlaps.size)
+    Some(unique) = claims.find(checkClaim(overlaps))
+    _ <- IO.println(unique.id)
   yield ()
