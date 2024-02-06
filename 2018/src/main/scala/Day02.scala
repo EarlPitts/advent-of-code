@@ -5,17 +5,7 @@ import cats.syntax.all._
 import cats.implicits._
 import cats.{Eq, Order}
 
-import util.getInput
-
-def group[A: Eq : Order](l: List[A]): List[List[A]] =
-  def go(acc: List[List[A]], curr: List[A], rest: List[A]): List[List[A]] =
-    (curr,rest) match
-      case (_,Nil) => curr :: acc
-      case (curr, a :: as) => if curr.contains(a)
-                              then go(acc, a :: curr, as)
-                              else go(curr :: acc, List(a), as)
-  val a :: as = l.sorted
-  go(List(), List(a), as)
+import util.*
 
 def hasN[A : Eq : Order](n: Int)(l: List[A]): Boolean =
   group(l).map(_.size).contains(n)
