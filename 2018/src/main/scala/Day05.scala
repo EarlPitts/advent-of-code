@@ -17,9 +17,13 @@ def step(s: List[Char]): List[Char] =
 def eval(polymer: List[Char]): List[Char] =
   val newPolymer = step(polymer)
   if newPolymer == polymer then polymer else eval(newPolymer)
+
+def sizes(polymer: List[Char]): List[(Char,Int)] =
+  ('a' to 'z').map(c => (c, eval(polymer.filter(_.toLower != c)).size)).toList
   
 object Main extends IOApp.Simple:
   def run: IO[Unit] = for
     data <- getInputRaw.map(_.strip.toCharArray.toList)
     _ <- IO.println(eval(data).size)
+    _ <- IO.println(sizes(data).minBy(_._2))
   yield ()
