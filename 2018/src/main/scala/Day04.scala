@@ -93,6 +93,12 @@ def minutes(rs: List[Record]): List[Int] =
 def bestMinute(id: ID, shifts: List[Shift]): Int =
   byId(id, shifts).flatMap(intervals).flatMap(minutes).sorted.groupBy(identity).maxBy(_._2.size)._1
 
+def secondDay(shifts: List[Shift]) =
+  val (i: ID, (min: Int,_)) = shifts.filterNot(_.size == 1)
+    .groupBy(id).mapValues(_.flatMap(intervals).flatMap(minutes)
+    .groupBy(identity).maxBy(_._2.size).map(_.size)).maxBy(_._2._2)
+  i * min
+
 def shifts(rs: List[Record]): List[Shift] =
   def collect(rs: List[List[Record]], r: Record): List[Shift] =
     r match
@@ -106,4 +112,5 @@ object Main extends IOApp.Simple:
     Success(rs) = p.parse(data)
     snoozy = sleepsMost(rs)
     _ <- IO.println(snoozy * bestMinute(snoozy,shifts(rs)))
+    _ <- IO.println(secondDay(shifts(rs)))
   yield ()
