@@ -7,6 +7,9 @@ import cats.implicits._
 
 val fileName = "input.txt"
 
+def unsafeGetInputRaw: String =
+  Source.fromFile(fileName).mkString
+
 def getInput: IO[List[String]] =
   IO.blocking(Source.fromFile(fileName).getLines().toList)
 
