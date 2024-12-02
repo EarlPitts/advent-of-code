@@ -19,12 +19,18 @@ def getInput: IO[List[String]] =
 def getInputRaw: IO[String] =
   IO.blocking(Source.fromFile(fileName).mkString)
 
-def group[A: Eq : Order](l: List[A]): List[List[A]] =
+def group[A: Eq: Order](l: List[A]): List[List[A]] =
   def go(acc: List[List[A]], curr: List[A], rest: List[A]): List[List[A]] =
-    (curr,rest) match
-      case (_,Nil) => curr :: acc
-      case (curr, a :: as) => if curr.contains(a)
-                              then go(acc, a :: curr, as)
-                              else go(curr :: acc, List(a), as)
+    (curr, rest) match
+      case (_, Nil) => curr :: acc
+      case (curr, a :: as) =>
+        if curr.contains(a)
+        then go(acc, a :: curr, as)
+        else go(curr :: acc, List(a), as)
   val a :: as = l.sorted
   go(List(), List(a), as)
+
+def removeOne[A](l: List[A]): List[List[A]] =
+  (0 to l.size - 1).map { i =>
+    l.take(i) ++ l.drop(i + 1)
+  }.toList
