@@ -14,7 +14,7 @@ case class Mul(i1: Int, i2: Int) extends Expr
 
 def p: Parsley[List[Statement]] =
   many(choice(pDo, pDont, pMul) <|> item)
-    .map(_.collect { case e: Statement => e })
+    .map(_.collect { case s: Statement => s })
 
 def pInt: Parsley[Int] = some(digit).map(_.mkString).map(_.toInt)
 
