@@ -66,6 +66,9 @@ case class Zipper[A](left: LazyList[A], focus: A, right: LazyList[A]):
   private lazy val rights: LazyList[Zipper[A]] =
     LazyList.iterate(this)(_.moveRight).zip(right).map(_._1)
 
+  def update(f: A => A): Zipper[A] =
+    Zipper(left, f(focus), right)
+
   def map[B](f: A => B): Zipper[B] =
     Zipper[B](left.map(f), f(focus), right.map(f))
 
@@ -134,6 +137,9 @@ case class Grid[A](value: Zipper[Zipper[A]]):
 
   def extract: A =
     value.extract.extract
+
+  def update(f: A => A): Grid[A] =
+    Grid(value.update(_.update(f)))
 
   def duplicate: Grid[Grid[A]] =
     def layer[X](u: Zipper[Zipper[X]]): Zipper[Zipper[Zipper[X]]] = {
