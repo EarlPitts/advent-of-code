@@ -35,6 +35,14 @@ def removeOne[A](l: List[A]): List[List[A]] =
     l.take(i) ++ l.drop(i + 1)
   }.toList
 
+def combs[A](list: List[A], n: Int): List[List[A]] =
+  if (n == 0) List(List())
+  else
+    list.flatMap { elem =>
+      combs(list, n - 1)
+        .map(elem :: _)
+    }
+
 case class Zipper[A](left: LazyList[A], focus: A, right: LazyList[A]):
   def moveLeft: Zipper[A] =
     if (left.isEmpty) this
