@@ -7,8 +7,8 @@ import scala.util.Try
 import Dir.*
 
 val input = unsafeGetInput("input.txt")
-  .map(_.toCharArray.toList)
-  .toList
+  .toArray
+  .map(_.toCharArray)
 
 val g = Grid(
   Zipper.fromList(input.toList.map((l: Array[Char]) => Zipper.fromList(l.toList)))
