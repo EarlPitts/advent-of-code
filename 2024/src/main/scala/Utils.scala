@@ -172,3 +172,13 @@ object Grid:
 
     def map[A, B](fa: Grid[A])(f: A => B): Grid[B] =
       fa.map(f)
+
+def timeExecution[A](f: => A, name: String): A = {
+  val startTime = System.nanoTime()
+  val result = f
+  val endTime = System.nanoTime()
+  val duration = endTime - startTime
+  println(s"$name Execution took ${duration / 1e6} milliseconds")
+  result
+}
+
