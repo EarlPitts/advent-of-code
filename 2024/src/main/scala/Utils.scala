@@ -7,6 +7,12 @@ import cats.implicits._
 
 val fileName = "input.txt"
 
+// I have no idea why this is not the default
+// instance for endofunctions in cats
+given monoidEndo[A]: Monoid[Endo[A]] with
+  def combine(f: Endo[A], g: Endo[A]): Endo[A] = f compose g
+  def empty: Endo[A] = identity
+
 def unsafeGetInputRaw: String =
   Source.fromFile(fileName).mkString
 
