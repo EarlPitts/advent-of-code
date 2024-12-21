@@ -49,6 +49,9 @@ def combs[A](list: List[A], n: Int): List[List[A]] =
         .map(elem :: _)
     }
 
+def iterate[A](value: A, n: Int, func: A => A): A =
+  (1 to n).foldLeft(value)((acc, _) => func(acc))
+
 case class Zipper[A](left: LazyList[A], focus: A, right: LazyList[A]):
   def moveLeft: Zipper[A] =
     if (left.isEmpty) this
