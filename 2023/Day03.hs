@@ -21,6 +21,8 @@ input =
 
 solution1 = solveList $ sum . join . join . toLists . extend nums . fromLists
 
+solution2' = solveList $ sum . fmap product . join . toLists . extend gears . fromLists
+
 grid :: Grid Char
 grid = fromLists $ words input
 
@@ -30,11 +32,25 @@ nums g = do
   guard $ nextToNumber g
   nub $ mapMaybe readNum (adjacent g)
 
+gears :: Grid Char -> [Int]
+gears g = do
+  guard $ isGear (focus g)
+  -- guard $ nextToTwoNumbers g
+  let nums = nub $ mapMaybe readNum (adjacent g)
+  guard (length nums == 2)
+  nums
+
+nextToTwoNumbers :: Grid Char -> Bool
+nextToTwoNumbers g = 2 == length (fmap focus (filter (isNumber . focus) (adjacent g)))
+
 nextToNumber :: Grid Char -> Bool
 nextToNumber = any (isNumber . focus) . adjacent
 
 isSpecial :: Char -> Bool
 isSpecial c = not (isNumber c || c == '.')
+
+isGear :: Char -> Bool
+isGear = (==) '*'
 
 readNum :: Grid Char -> Maybe Int
 readNum g = do
