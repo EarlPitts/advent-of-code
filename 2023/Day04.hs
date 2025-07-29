@@ -31,8 +31,23 @@ solution1 = sum . fmap (\n -> 2 ^ (n - 1)) . filter (/= 0) . fmap numOfWinning
 numOfWinning :: Card -> Int
 numOfWinning (Card _ winning have) = length $ [w | w <- winning, h <- have, h == w]
 
+solution2 :: [Card] -> Int
+solution2 cards = sum $ foldl f copies wins
+  where
+    wins = zip [1 ..] $ numOfWinning <$> cards
+    copies = replicate (length cards) 1
+    f counts (idx, winCnt) = increase idx (idx + winCnt) (counts !! (idx - 1)) counts
+
+increase :: Int -> Int -> Int -> [Int] -> [Int]
+increase from to amnt counts = l <> m <> r
+  where
+    l = take from counts
+    m = take (to - from) $ (+ amnt) <$> drop from counts
+    r = drop to counts
+
 main = do
   input <- readInput
   let (Right cards) = parse p "" input
   print cards
   print $ solution1 cards
+  print $ solution2 cards
