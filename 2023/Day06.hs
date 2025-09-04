@@ -1,3 +1,5 @@
+module Day06 where
+
 import Control.Category ((>>>))
 import Data.List
 

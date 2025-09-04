@@ -1,3 +1,5 @@
+module Day04 where
+
 import Text.Parsec
 import Text.Parsec.String
 import Utils

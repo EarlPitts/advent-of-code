@@ -1,3 +1,5 @@
+module Day03 where
+
 import Control.Comonad
 import Control.Monad
 import Data.Char

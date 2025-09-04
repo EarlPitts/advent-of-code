@@ -1,3 +1,5 @@
+module Day01 where
+
 import Data.Char
 import Data.Either
 import Data.List

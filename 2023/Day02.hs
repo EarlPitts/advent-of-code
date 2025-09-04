@@ -1,3 +1,5 @@
+module Day02 where
+
 import Data.List
 
 import Text.Parsec

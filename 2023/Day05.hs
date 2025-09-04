@@ -1,3 +1,5 @@
+module Day05 where
+
 import Data.List
 import Data.List.Split
 import Data.Maybe
