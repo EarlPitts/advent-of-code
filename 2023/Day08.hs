@@ -1,7 +1,10 @@
-module Day08 where
+{-# LANGUAGE RankNTypes #-}
+
+module Main where
 
 import Data.List
 import qualified Data.Map as M
+import Debug.Trace
 import Text.Parsec
 import Text.Parsec.String
 import Utils
@@ -27,9 +30,9 @@ data Dir = L | R deriving (Show, Eq, Read)
 
 newtype Node = Node String deriving (Show, Eq, Ord)
 
-data Connected = Connected Node Node deriving (Show, Eq)
+data Connected = Connected {left :: Node, right :: Node} deriving (Show, Eq)
 
-newtype Network = Network (M.Map Node Connected) deriving (Show, Eq)
+newtype Network = Network {getNetwork :: M.Map Node Connected} deriving (Show, Eq)
 
 p :: Parser ([Dir], Network)
 p = (,) <$> (pDirs <* newline <* newline) <*> pNetwork
@@ -53,9 +56,9 @@ pNode = do
 walk :: [Dir] -> Network -> Node -> [Node]
 walk ds (Network n) start = scanl next start (cycle ds)
   where
-    next curr dir = if dir == L then l else r
-      where
-        (Just (Connected l r)) = M.lookup curr n
+    next curr dir = case dir of
+      L -> maybe (error "") left (M.lookup curr n)
+      R -> maybe (error "") right (M.lookup curr n)
 
 solution :: [Dir] -> Network -> Int
 solution ds n =
@@ -64,14 +67,26 @@ solution ds n =
 startPoints :: Network -> [Node]
 startPoints (Network n) = filter (\(Node name) -> last name == 'A') (M.keys n)
 
+-- solution' :: [Dir] -> Network -> Int
+-- solution' ds n = length $ takeWhile (not . all endPoint) paths
+--   where
+--     paths = transpose (walk ds n <$> startPoints n)
+
 solution' :: [Dir] -> Network -> Int
-solution' ds n = length $ takeWhile (any (\(Node name) -> last name /= 'Z')) paths
+solution' ds n = foldr1 lcm cycles
   where
-    paths = transpose (walk ds n <$> startPoints n)
+    cycles = cycleLength . walk ds n <$> startPoints n
+
+endPoint :: Node -> Bool
+endPoint (Node name) = last name == 'Z'
+
+cycleLength :: [Node] -> Int
+cycleLength = length . takeWhile (not . endPoint)
 
 main :: IO ()
 main = do
-  -- input <- readInput
+  input <- readInput
   let Right (dirs, network) = parse p "" input
-  -- print $ solution dirs network
-  print $ solution' dirs network
+  -- print $ solution' (cycle dirs) network
+  print $ solution dirs network
+  print $ solution' (cycle dirs) network
