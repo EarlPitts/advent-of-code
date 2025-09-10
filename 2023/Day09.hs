@@ -18,10 +18,24 @@ diffs [] = []
 extrapolate :: [Int] -> Int
 extrapolate = sum . fmap last . takeWhile (not . all (== 0)) . iterate diffs
 
+signs :: [Int] -> [Int]
+signs (x : y : xs) = -x : y : signs xs
+signs [x] = [-x]
+signs [] = []
+
+extrapolateBack :: [Int] -> Int
+extrapolateBack ns = x + sum (signs xs)
+  where
+    x : xs = fmap head $ takeWhile (not . all (== 0)) $ iterate diffs ns
+
 solution :: [[Int]] -> Int
 solution = sum . fmap extrapolate
+
+solution' :: [[Int]] -> Int
+solution' = sum . fmap extrapolateBack
 
 main :: IO ()
 main = do
   l <- parse <$> readInput
   print $ solution l
+  print $ solution' l
