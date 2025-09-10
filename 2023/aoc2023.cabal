@@ -5,9 +5,6 @@ build-type:      Simple
 
 library
     exposed-modules:
-        Utils
-      , Zipper
-      , Grid
       , Day01
       , Day02
       , Day03
@@ -17,6 +14,11 @@ library
       , Day07
       , Day08
       , Day09
+      , Day10
+    other-modules:
+        Utils
+      , Zipper
+      , Grid
     build-depends:   
         base ^>=4.19.2.0
       , parsec

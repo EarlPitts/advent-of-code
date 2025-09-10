@@ -23,6 +23,18 @@ moveLeft (Grid z) = Grid $ Z.update Z.moveLeft z
 moveRight :: Grid a -> Grid a
 moveRight (Grid z) = Grid $ Z.update Z.moveRight z
 
+moveN :: (Grid a -> Grid a) -> Int -> (Grid a -> Grid a)
+moveN move n = foldr (.) id (replicate n move)
+
+moveRightN, moveLeftN, moveDownN, moveUpN :: Int -> (Grid a -> Grid a)
+moveRightN = moveN moveRight
+moveLeftN = moveN moveLeft
+moveDownN = moveN moveDown
+moveUpN = moveN moveUp
+
+setPos :: (Int, Int) -> Grid a -> Grid a
+setPos (x, y) = moveRightN y . moveDownN x
+
 safeUp :: Grid a -> Maybe (Grid a)
 safeUp (Grid z) = Grid <$> Z.safeLeft z
 
@@ -50,6 +62,13 @@ fromLists = Grid . Z.fromList . fmap Z.fromList
 
 focus :: Grid a -> a
 focus = Z.focus . Z.focus . runGrid
+
+findPos :: (a -> Bool) -> Grid a -> (Int, Int)
+findPos p g = (row, col)
+  where
+    ls = toLists g
+    row = fst $ fromJust $ find snd $ zip [0..] (fmap (any p) ls)
+    col = fst $ fromJust $ find snd $ zip [0..] (fmap p (ls !! row))
 
 adjacent :: Grid a -> [Grid a]
 adjacent g = mapMaybe ($ g) [up, down, left, right, upRight, upLeft, downRight, downLeft]
