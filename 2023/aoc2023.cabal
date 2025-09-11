@@ -25,6 +25,8 @@ library
       , containers
       , split
       , comonad
+      , mtl
+      , monad-loops
     hs-source-dirs:   .
     default-extensions: DeriveFunctor
     default-language: Haskell2010

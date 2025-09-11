@@ -18,10 +18,10 @@ moveDown :: Grid a -> Grid a
 moveDown (Grid z) = Grid $ Z.moveRight z
 
 moveLeft :: Grid a -> Grid a
-moveLeft (Grid z) = Grid $ Z.update Z.moveLeft z
+moveLeft (Grid z) = Grid $ Z.moveLeft <$> z
 
 moveRight :: Grid a -> Grid a
-moveRight (Grid z) = Grid $ Z.update Z.moveRight z
+moveRight (Grid z) = Grid $ Z.moveRight <$> z
 
 moveN :: (Grid a -> Grid a) -> Int -> (Grid a -> Grid a)
 moveN move n = foldr (.) id (replicate n move)
