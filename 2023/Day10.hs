@@ -1,7 +1,6 @@
 module Day10 where
 
 import Control.Monad.State
-import Data.Bifunctor
 import Grid
 import Utils
 
@@ -37,15 +36,15 @@ moveToStart maze = setPos start maze
 
 data Dir = U | D | L | R deriving (Eq, Show)
 
-step :: Grid Pipe -> State (Int, Dir) (Grid Pipe)
+step :: Grid Pipe -> State Dir (Grid Pipe)
 step maze = do
-  dir <- gets snd
+  dir <- get
   let newMaze = case dir of
         U -> moveUp maze
         D -> moveDown maze
         L -> moveLeft maze
         R -> moveRight maze
-  modify $ bimap (+ 1) (changeDir (focus newMaze))
+  modify $ changeDir (focus newMaze)
   return newMaze
 
 changeDir :: Pipe -> Dir -> Dir
@@ -61,13 +60,12 @@ changeDir SE U = R
 changeDir NS D = D
 changeDir NE D = R
 changeDir NW D = L
-changeDir Start _ = L
 
-run :: Grid Pipe -> State (Int, Dir) (Grid Pipe)
+run :: Grid Pipe -> State Dir [Grid Pipe]
 run = iterateUntilM ((== Start) . focus) step
 
 solution :: Grid Pipe -> Int
-solution maze = div (fst $ execState (run maze) (0, L)) 2
+solution maze = div (length (evalState (run maze) L)) 2
 
 main :: IO ()
 main = do
