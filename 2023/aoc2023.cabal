@@ -3,8 +3,11 @@ name:            aoc2023
 version:         0.1.0.0
 build-type:      Simple
 
-library
+library solutions
     exposed-modules:
+        Utils
+      , Zipper
+      , Grid
       , Day01
       , Day02
       , Day03
@@ -15,10 +18,7 @@ library
       , Day08
       , Day09
       , Day10
-    other-modules:
-        Utils
-      , Zipper
-      , Grid
+      , Day11
     build-depends:   
         base ^>=4.19.2.0
       , parsec

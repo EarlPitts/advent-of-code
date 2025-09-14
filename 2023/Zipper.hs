@@ -6,7 +6,7 @@ import Data.Char
 import Data.Foldable
 import Data.List
 
-data Zipper a = Zipper [a] a [a] deriving (Functor)
+data Zipper a = Zipper [a] a [a] deriving (Eq, Functor)
 
 fromList :: [a] -> Zipper a
 fromList (x : xs) = Zipper [] x xs
@@ -36,11 +36,11 @@ focus (Zipper _ m _) = m
 
 lefts :: Zipper a -> [Zipper a]
 lefts z@(Zipper l _ _) =
-  fst <$> zip (tail $ iterate moveLeft z) l
+  take (length l) (tail $ iterate moveLeft z)
 
 rights :: Zipper a -> [Zipper a]
 rights z@(Zipper _ _ r) =
-  fst <$> zip (tail $ iterate moveRight z) r
+  take (length r) (tail $ iterate moveRight z)
 
 update :: (a -> a) -> Zipper a -> Zipper a
 update f (Zipper l m r) = Zipper l (f m) r

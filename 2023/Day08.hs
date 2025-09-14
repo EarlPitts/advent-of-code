@@ -1,6 +1,6 @@
 {-# LANGUAGE RankNTypes #-}
 
-module Main where
+module Day08 where
 
 import Data.List
 import qualified Data.Map as M

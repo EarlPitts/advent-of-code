@@ -8,8 +8,7 @@ import Data.List
 import Data.Maybe
 import qualified Zipper as Z
 
-newtype Grid a = Grid {runGrid :: Z.Zipper (Z.Zipper a)}
-  deriving (Functor)
+newtype Grid a = Grid {runGrid :: Z.Zipper (Z.Zipper a)} deriving (Eq, Functor)
 
 moveUp :: Grid a -> Grid a
 moveUp (Grid z) = Grid $ Z.moveLeft z
@@ -63,12 +62,15 @@ fromLists = Grid . Z.fromList . fmap Z.fromList
 focus :: Grid a -> a
 focus = Z.focus . Z.focus . runGrid
 
+getPos :: Grid a -> (Int, Int)
+getPos (Grid (Z.Zipper l (Z.Zipper l' _ _) _)) = (length l, length l')
+
 findPos :: (a -> Bool) -> Grid a -> (Int, Int)
 findPos p g = (row, col)
   where
     ls = toLists g
-    row = fst $ fromJust $ find snd $ zip [0..] (fmap (any p) ls)
-    col = fst $ fromJust $ find snd $ zip [0..] (fmap p (ls !! row))
+    row = fst $ fromJust $ find snd $ zip [0 ..] (fmap (any p) ls)
+    col = fst $ fromJust $ find snd $ zip [0 ..] (fmap p (ls !! row))
 
 adjacent :: Grid a -> [Grid a]
 adjacent g = mapMaybe ($ g) [up, down, left, right, upRight, upLeft, downRight, downLeft]
@@ -92,6 +94,6 @@ instance Comonad Grid where
   duplicate (Grid z) = Grid <$> Grid layers
     where
       layer u = Z.Zipper (lefts u) u (rights u)
-      lefts z@(Z.Zipper l _ _) = fst <$> zip (tail $ iterate (fmap Z.moveLeft) z) l
-      rights z@(Z.Zipper _ _ r) = fst <$> zip (tail $ iterate (fmap Z.moveRight) z) r
+      lefts z@(Z.Zipper l (Z.Zipper l' _ _) _) = take (length l') (tail $ iterate (fmap Z.moveLeft) z)
+      rights z@(Z.Zipper _ (Z.Zipper _ _ r') r) = take (length r') (tail $ iterate (fmap Z.moveRight) z)
       layers = layer (layer z)
