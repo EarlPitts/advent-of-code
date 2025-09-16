@@ -6,7 +6,7 @@ import Data.Maybe
 import Data.Monoid
 import Text.Parsec
 import Text.Parsec.String
-import Utils
+import AoC.Utils
 
 type Seed = Int
 

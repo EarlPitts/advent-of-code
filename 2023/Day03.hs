@@ -7,7 +7,7 @@ import Data.List
 import Data.Maybe
 import Debug.Trace
 import Grid
-import Utils
+import AoC.Utils
 
 input =
   "467..114..\n\

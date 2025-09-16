@@ -1,6 +1,6 @@
 module Day09 where
 
-import Utils
+import AoC.Utils
 
 input =
   "0 3 6 9 12 15\n\

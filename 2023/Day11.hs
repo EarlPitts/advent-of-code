@@ -5,7 +5,7 @@ import Control.Comonad
 import Control.Monad
 import Data.List
 import Grid
-import Utils
+import AoC.Utils
 
 input =
   "...#......\n\

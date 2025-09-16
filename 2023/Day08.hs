@@ -7,7 +7,7 @@ import qualified Data.Map as M
 import Debug.Trace
 import Text.Parsec
 import Text.Parsec.String
-import Utils
+import AoC.Utils
 
 -- input =
 --   "LLR\n\n\

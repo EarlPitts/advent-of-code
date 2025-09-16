@@ -2,7 +2,7 @@ module Day10 where
 
 import Control.Monad.State
 import Grid
-import Utils
+import AoC.Utils
 
 input =
   ".....\n\

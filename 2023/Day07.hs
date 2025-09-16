@@ -3,7 +3,7 @@ module Day07 where
 import Control.Category ((>>>))
 import Data.List
 import Data.Ord
-import Utils
+import AoC.Utils
 
 input =
   "32T3K 765\n\

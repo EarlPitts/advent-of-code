@@ -5,10 +5,7 @@ build-type:      Simple
 
 library solutions
     exposed-modules:
-        Utils
-      , Zipper
-      , Grid
-      , Day01
+        Day01
       , Day02
       , Day03
       , Day04
@@ -19,8 +16,10 @@ library solutions
       , Day09
       , Day10
       , Day11
+      , Day12
     build-depends:   
         base ^>=4.19.2.0
+      , my-tools
       , parsec
       , containers
       , split

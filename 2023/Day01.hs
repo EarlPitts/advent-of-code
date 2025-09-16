@@ -6,7 +6,7 @@ import Data.List
 import Data.Maybe
 import Text.Parsec
 import Text.Parsec.String
-import Utils
+import AoC.Utils
 
 -- Part 1
 numbers :: String -> [Int]
