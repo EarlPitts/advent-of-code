@@ -1,8 +1,7 @@
 module Day12 where
 
-import Data.List
-import Data.List.Split (splitOn)
 import AoC.Utils
+import Data.List.Split (splitOn)
 
 input =
   "???.### 1,1,3\n\
@@ -30,22 +29,23 @@ parseLine str = Record springs damaged
     springs = parseSpring <$> springsStr
     damaged = read <$> splitOn "," damagedStr
 
-perms :: [Spring] -> [[Spring]]
-perms = foldr f [[]]
-  where
-    f Ugly ps = ((Good :) <$> ps) <> ((Bad :) <$> ps)
-    f s ps = (s :) <$> ps
-
-check :: [Int] -> [Spring] -> Bool
-check damaged ss = grps == damaged
-  where
-    grps = fmap length $ filter ((== Bad) . head) $ group ss
-
 count :: Record -> Int
-count (Record ss damaged) = length $ filter (check damaged) (perms ss)
+count (Record ss damaged) = arrangements ss damaged
 
 solution :: [Record] -> Int
 solution = sum . fmap count
+
+arrangements :: [Spring] -> [Int] -> Int
+arrangements ss [] = if Bad `elem` ss then 0 else 1
+arrangements [] gs = if null gs then 1 else 0
+arrangements (Good : ss) gs = arrangements ss gs
+arrangements (Bad : ss) (g : gs) =
+  if g <= length (Bad : ss)
+    && notElem Good (take g (Bad : ss))
+    && (g == length (Bad : ss) || ((length (Bad : ss) > g) && ((Bad : ss) !! g /= Bad)))
+    then arrangements (drop g ss) gs
+    else 0
+arrangements (Ugly : ss) gs = arrangements (Bad : ss) gs + arrangements (Good : ss) gs
 
 main = do
   -- let rs = parse input
