@@ -4,4 +4,4 @@ packages:
 source-repository-package
   type: git
   location: https://github.com/EarlPitts/my-tools
-  branch: master
+  branch: 86b2c5dabdff659a7dae9b031430743f99dc5ebf
