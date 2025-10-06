@@ -5,18 +5,19 @@ build-type:      Simple
 
 library solutions
     exposed-modules:
-        Day01
-      , Day02
-      , Day03
-      , Day04
-      , Day05
-      , Day06
-      , Day07
-      , Day08
-      , Day09
-      , Day10
-      , Day11
+        Day13
       , Day12
+      , Day11
+      , Day10
+      , Day09
+      , Day08
+      , Day07
+      , Day06
+      , Day05
+      , Day04
+      , Day03
+      , Day02
+      , Day01
     build-depends:   
         base ^>=4.19.2.0
       , my-tools
@@ -26,6 +27,9 @@ library solutions
       , comonad
       , mtl
       , monad-loops
+      , criterion
+      , vector
+      , array
     hs-source-dirs:   .
     default-extensions: DeriveFunctor
     default-language: Haskell2010
