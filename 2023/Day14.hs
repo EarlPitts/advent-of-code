@@ -1,15 +1,23 @@
 module Day14 where
 
 import AoC.Utils
+import Data.List
 import Debug.Trace
 
-data Plane = Plane [Row] deriving (Show, Eq)
+data Plane = Plane {rows :: [Row]} deriving Eq
 
 type Row = [Tile]
 
 data Tile = Empty | Round | Cube deriving (Show, Eq)
 
 data Dir = L | R | U | D deriving (Show, Eq)
+
+instance Show Plane where
+  show (Plane rows) = unlines $ (fmap . fmap) f rows
+    where
+      f Empty = ' '
+      f Round = 'O'
+      f Cube = '#'
 
 input =
   "O....#....\n\
@@ -30,8 +38,11 @@ parse = Plane . (fmap . fmap) pTile . lines
     pTile '#' = Cube
     pTile '.' = Empty
 
-solution :: Plane -> Int
-solution = measureLoad . slide U
+-- solution :: Plane -> Int
+solution = take 300 . fmap measureLoad . iterate cyclePlane
+
+cyclePlane :: Plane -> Plane
+cyclePlane = slide R . slide D . slide L . slide U
 
 measureLoad :: Plane -> Int
 measureLoad (Plane p) =
@@ -41,14 +52,26 @@ measureLoad (Plane p) =
     size = length p
 
 slide :: Dir -> Plane -> Plane
-slide dir (Plane plane) = case dir of
-  U -> Plane $ (iterate update plane) !! 30 -- Maybe find a way to get the fixed-point?
+slide dir plane = case dir of
+  U -> (iterate update plane) !! 99 -- Maybe find a way to get the fixed-point?
+  D -> south $ (iterate update (south plane)) !! 99
+  R -> east' $ (iterate update (east plane)) !! 99
+  L -> west $ (iterate update (west plane)) !! 99
 
-update :: [Row] -> [Row]
-update (r1 : r2 : t) = u1 : update (u2 : t)
+update :: Plane -> Plane
+update (Plane (r1 : r2 : t)) =
+  Plane (u1 : (rows $ update (Plane (u2 : t))))
   where
     (u1, u2) = progress r1 r2
-update [l] = [l]
+update other = other
+
+south = Plane . reverse . rows
+
+west = Plane . transpose . rows
+
+east = Plane . reverse . transpose . rows
+
+east' = Plane . transpose . reverse . rows
 
 progress :: Row -> Row -> (Row, Row)
 progress r1 r2 = unzip $ fmap f (zip r1 r2)
