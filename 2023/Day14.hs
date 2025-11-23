@@ -2,7 +2,6 @@ module Day14 where
 
 import AoC.Utils
 import Data.List
-import Debug.Trace
 
 data Plane = Plane {rows :: [Row]} deriving Eq
 
@@ -18,18 +17,6 @@ instance Show Plane where
       f Empty = ' '
       f Round = 'O'
       f Cube = '#'
-
-input =
-  "O....#....\n\
-  \O.OO#....#\n\
-  \.....##...\n\
-  \OO.#O....O\n\
-  \.O.....O#.\n\
-  \O.#..O.#.#\n\
-  \..O..#O..O\n\
-  \.......O..\n\
-  \#....###..\n\
-  \#OO..#...."
 
 parse :: String -> Plane
 parse = Plane . (fmap . fmap) pTile . lines
