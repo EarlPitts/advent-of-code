@@ -33,6 +33,7 @@ solution' = fst . foldl f (0, 50)
         let (clicks, newDial) = divMod (dial + n) 100
          in (c + (abs clicks), newDial)
 
+main :: IO ()
 main = do
   input <- parse <$> readInput
   putStrLn "Part 1"

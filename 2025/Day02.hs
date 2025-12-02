@@ -28,6 +28,7 @@ solution = sum . fmap read . filter invalid . fmap show
 solution' :: [Int] -> Int
 solution' = sum . fmap read . filter invalid' . fmap show
 
+main :: IO ()
 main = do
   ranges <- parse <$> readInput
   putStrLn "Part 1"
