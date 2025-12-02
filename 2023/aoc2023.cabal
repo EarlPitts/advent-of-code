@@ -5,7 +5,8 @@ build-type:      Simple
 
 library solutions
     exposed-modules:
-        Day15
+        Day16
+      , Day15
       , Day14
       , Day13
       , Day12
@@ -33,5 +34,13 @@ library solutions
       , vector
       , array
     hs-source-dirs:   .
-    default-extensions: DeriveFunctor
+    default-extensions:
+      DeriveFunctor
+      ConstraintKinds
+      DeriveAnyClass
+      DeriveGeneric
+      FlexibleContexts
+      GeneralizedNewtypeDeriving
+      LambdaCase
+      OverloadedRecordDot
     default-language: Haskell2010
