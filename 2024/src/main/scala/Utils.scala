@@ -28,7 +28,7 @@ def getInputRaw: IO[String] =
 def group[A: Eq: Order](l: List[A]): List[List[A]] =
   def go(acc: List[List[A]], curr: List[A], rest: List[A]): List[List[A]] =
     (curr, rest) match
-      case (_, Nil) => curr :: acc
+      case (_, Nil)        => curr :: acc
       case (curr, a :: as) =>
         if curr.contains(a)
         then go(acc, a :: curr, as)
@@ -68,6 +68,12 @@ case class Zipper[A](left: LazyList[A], focus: A, right: LazyList[A]):
   def safeRight: Option[Zipper[A]] =
     if (right.isEmpty) None
     else Some(Zipper[A](focus #:: left, right.head, right.tail))
+
+  def jump(idx: Int): Option[Zipper[A]] =
+    val as = toList
+    if idx > as.length
+    then None
+    else Some(Zipper(as.take(idx), as.drop(idx).head, as.drop(idx + 1)))
 
   private lazy val lefts: LazyList[Zipper[A]] =
     LazyList.iterate(this)(_.moveLeft).tail.zip(left).map(_._1)
@@ -136,12 +142,12 @@ case class Grid[A](value: Zipper[Zipper[A]]):
 
   def safeLeft: Option[Grid[A]] =
     value.extract.safeLeft match
-      case None => None
+      case None         => None
       case Some(zipper) => Some(Grid(value.map(_.moveLeft)))
 
   def safeRight: Option[Grid[A]] =
     value.extract.safeRight match
-      case None => None
+      case None         => None
       case Some(zipper) => Some(Grid(value.map(_.moveRight)))
 
   def extract: A =
@@ -190,4 +196,3 @@ def timeExecution[A](f: => A, name: String): A = {
   println(s"$name Execution took ${duration / 1e6} milliseconds")
   result
 }
-
