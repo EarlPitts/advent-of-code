@@ -47,9 +47,6 @@ adjacent grid (Pos row col) =
 fixpoint :: (Eq a) => [a] -> a
 fixpoint (x : y : as) = if x == y then x else fixpoint (y : as)
 
-countPapers :: Grid Space -> Int
-countPapers = length . filter (== Paper) . concat
-
 solution :: Grid Space -> Int
 solution grid = startCount - endCount
   where
