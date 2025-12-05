@@ -34,9 +34,6 @@ merge :: Range -> Range -> Range
 merge (Range b t) (Range b' t') =
   Range (min b b') (max t t')
 
-fixpoint :: (Eq a) => [a] -> a
-fixpoint (x : y : as) = if x == y then x else fixpoint (y : as)
-
 solution' :: [Range] -> Integer
 solution' = sum . fmap count . fixpoint . iterate mergeRanges . sort
 

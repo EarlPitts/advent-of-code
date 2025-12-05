@@ -44,9 +44,6 @@ adjacent grid (Pos row col) =
       (dr, dc) /= (0, 0)
     ]
 
-fixpoint :: (Eq a) => [a] -> a
-fixpoint (x : y : as) = if x == y then x else fixpoint (y : as)
-
 solution :: Grid Space -> Int
 solution grid = startCount - endCount
   where
