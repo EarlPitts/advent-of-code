@@ -5,4 +5,6 @@ tags
 .metals
 project
 target
+input
 input.txt
+example.txt

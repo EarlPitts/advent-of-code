@@ -29,12 +29,6 @@ remove grid = (fmap . fmap) f numbered
         then Empty
         else tile
 
-indexGrid :: [[a]] -> [[(Int, Int, a)]]
-indexGrid grid =
-  [ [(r, c, elem) | (c, elem) <- zip [0 ..] row]
-  | (r, row) <- zip [0 ..] grid
-  ]
-
 adjacent :: Grid Space -> Pos -> [Space]
 adjacent grid (Pos row col) =
   catMaybes
