@@ -37,9 +37,9 @@ count beam@(Pos r c) ss len =
             Nothing ->
               let [a, b] = splitBeam next
                in do
-                    result <- (+) <$> (count a ss len) <*> (count b ss len)
-                    modify $ M.insert next (result + 1)
-                    pure (result + 1)
+                    cnt <- (+ 1) <$> ((+) <$> (count a ss len) <*> (count b ss len))
+                    modify $ M.insert next cnt
+                    pure cnt
         else count next ss len
   where
     next = down beam
