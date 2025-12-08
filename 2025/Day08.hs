@@ -52,7 +52,7 @@ solution' bs = b.x * b'.x
     cs = fmap singleton bs
     ds = odds $ distances bs
     Just idx = findIndex (== 1) $ fmap (length . snd) $ iterate connect (ds, cs)
-    (b, b') = ds !! idx
+    (b, b') = ds !! (idx - 1)
 
 main :: IO ()
 main = do
