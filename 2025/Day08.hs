@@ -1,15 +1,17 @@
 module Day08 where
 
 import AoC.Utils
+import Data.Function
 import Data.List
 import Data.List.Split
+import Data.Maybe
 
 data Box = Box {x :: Int, y :: Int, z :: Int} deriving (Show, Eq)
 
 type Circuit = [Box]
 
 parse :: String -> [Box]
-parse str = fmap pBox $ lines str
+parse = fmap pBox . lines
   where
     pBox boxStr = case splitOn "," boxStr of
       [x, y, z] -> Box (read x) (read y) (read z)
@@ -20,11 +22,15 @@ distance (Box x y z) (Box x' y' z') =
 
 distances :: [Box] -> [(Box, Box)]
 distances bs =
-  fmap (\(b, b', _) -> (b, b')) $ sortOn (\(_, _, d) -> d) $ [(x, y, distance x y) | x <- bs, y <- delete x bs]
+  [ ((x, y), distance x y)
+  | x <- bs,
+    y <- delete x bs
+  ]
+    & sortOn snd
+    & fmap fst
 
 findCircuit :: Box -> [Circuit] -> Circuit
-findCircuit b cs = case find (elem b) cs of
-  Just c -> c
+findCircuit b cs = fromJust $ find (elem b) cs
 
 odds :: [a] -> [a]
 odds [] = []
@@ -41,7 +47,12 @@ connect (((b1, b2) : ds), cs) =
 
 solution :: [Box] -> Int
 solution bs =
-  product $ take 3 $ sortBy (flip compare) $ fmap length $ snd $ iterate connect (ds, cs) !! 1000
+  iterate connect (ds, cs) !! 1000
+    & snd
+    & fmap length
+    & sortBy (flip compare)
+    & take 3
+    & product
   where
     cs = fmap singleton bs
     ds = odds $ distances bs
