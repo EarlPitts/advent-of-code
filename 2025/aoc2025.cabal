@@ -5,7 +5,8 @@ build-type:      Simple
 
 library solutions
     exposed-modules:
-        Day07
+        Day08
+      , Day07
       , Day06
       , Day05
       , Day04
