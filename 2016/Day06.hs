@@ -1,3 +1,5 @@
+module Day06 where
+
 import Data.List
 
 freq :: ([String] -> String) -> String -> Char

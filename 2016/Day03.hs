@@ -1,3 +1,5 @@
+module Day03 where
+
 parse :: String -> [(Int,Int,Int)]
 parse = fmap f . lines
   where

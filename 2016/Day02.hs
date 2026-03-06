@@ -1,3 +1,5 @@
+module Day02 where
+
 data Dir = L | R | U | D deriving (Show)
 data Button = One | Two | Three | Four | Five | Six | Seven | Eight | Nine | A | B | C | D' deriving (Show)
 

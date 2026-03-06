@@ -1,3 +1,5 @@
+module Day01 where
+
 data Turn = L | R deriving Show
 data Ins = Ins Turn Int deriving Show
 

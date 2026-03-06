@@ -1,7 +1,9 @@
 {-# LANGUAGE OverloadedStrings #-}
 
+module Day05 where
+
 import Crypto.Hash
-import Data.ByteString qualified as B
+import qualified Data.ByteString as B
 import Data.List
 import Data.String
 

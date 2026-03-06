@@ -1,3 +1,5 @@
+module Day09 where
+
 import Control.Monad
 import Text.Parsec
 import Text.Parsec.String
@@ -36,13 +38,17 @@ parseMarker = do
 parseInt :: Parser Int
 parseInt = read <$> many1 digit
 
-uncompress :: Data -> String
-uncompress (Data d) = foldr f [] d
+decompress :: Data -> String
+decompress (Data d) = foldr f [] d
   where
     f (Right s) acc = s ++ acc
     f (Left (Repeated n s)) acc = concat (replicate n s) ++ acc
 
+-- You have to decompress until there is no marker left :)
 main :: IO ()
 main = do
   Right input <- parse p "" <$> readFile "input"
-  print $ length (uncompress input )
+  let once = decompress input
+  let (Right twice) = decompress <$> parse p "" once
+  print $ length once
+  print $ length twice
